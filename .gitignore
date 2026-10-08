@@ -9,10 +9,14 @@ backups/
 storage/
 logs/
 *.log
+*.gz
+*.bak
 
 # environment / secrets
 .env
 .env.*
+.env.local
 
 # database dumps
 *.sql
+*.sql.gz
