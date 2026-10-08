@@ -140,4 +140,4 @@ Project ini dibuat untuk kebutuhan internal bisnis dan pengembangan lebih lanjut
 
 ## Author
 
-Aryaneri
+SkyWings
