@@ -1,0 +1,18 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# local runtime data
+backups/
+storage/
+logs/
+*.log
+
+# environment / secrets
+.env
+.env.*
+
+# database dumps
+*.sql

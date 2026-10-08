@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Kasir - Serba Serbi Khas Yiheng</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<body>
+    <div id="loginModal" class="login-modal">
+        <div class="login-card">
+            <div class="login-brand">🍽️ Serba Serbi Khas Yiheng</div>
+            <h2>Login Kasir</h2>
+            <p class="login-subtitle">Masuk untuk mulai transaksi.</p>
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="usernameInput">Username</label>
+                    <input id="usernameInput" type="text" placeholder="Masukkan username" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="passwordInput">Password</label>
+                    <input id="passwordInput" type="password" placeholder="Masukkan password" required>
+                </div>
+
+                <button type="submit" class="btn-login">Masuk</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="appShell" class="app-shell hidden">
+        <div class="header">
+            <div class="header-inner">
+                <h1>🍽️ Serba Serbi Khas Yiheng</h1>
+                <div class="header-actions">
+                    <span id="cashierBadge">Kasir: -</span>
+                    <button class="btn-menu" id="toggleHistoryBtn" type="button">Riwayat</button>
+                    <button class="btn-menu" id="toggleMenuBtn" type="button">Edit Menu</button>
+                    <button class="btn-logout" onclick="logoutUser()">Keluar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="products-section">
+            <h2>Daftar Menu</h2>
+            <div class="product-grid" id="productGrid"></div>
+        </div>
+
+        <div class="cart-section">
+            <h2>Keranjang</h2>
+
+            <div class="cart-items" id="cartItems">
+                <p style="text-align: center; color: #6b7280; margin-top: 20px;">Keranjang kosong</p>
+            </div>
+
+            <div class="total-section">
+                <div class="summary-row">
+                    <span>Total:</span>
+                    <span class="total-amount" id="totalAmount">Rp 0</span>
+                </div>
+                <button class="btn-action" onclick="openPaymentModal()">Bayar</button>
+                <button class="btn-clear" onclick="clearCart()">Batal / Kosongkan</button>
+            </div>
+
+            <div class="report-section">
+                <h3>📊 Laporan Harian</h3>
+                <div class="report-box">
+                    <div class="report-item">
+                        <span>Jumlah Transaksi</span>
+                        <strong id="dailyCount">0</strong>
+                    </div>
+                    <div class="report-item">
+                        <span>Total Penjualan</span>
+                        <strong id="dailyTotal">Rp 0</strong>
+                    </div>
+                    <div class="report-item">
+                        <span>Rata-rata</span>
+                        <strong id="dailyAverage">Rp 0</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal history-modal hidden" id="historyModal">
+        <div class="history-panel">
+            <div class="history-header">
+                <h3>📋 Riwayat Transaksi</h3>
+                <button class="btn-close-history" type="button" onclick="toggleHistoryPanel(false)">Tutup</button>
+            </div>
+            <div class="history-actions">
+                <button class="btn-export" type="button" onclick="exportTransactions('csv')">📤 Export CSV</button>
+                <button class="btn-export" type="button" onclick="exportTransactions('pdf')">📄 Export PDF</button>
+                <button class="btn-print" type="button" onclick="printHistory()" title="Print riwayat transaksi">🖨️ Print Owner/Admin</button>
+            </div>
+            <div id="transactionHistory">Belum ada transaksi.</div>
+        </div>
+    </div>
+
+    <div class="modal product-modal hidden" id="productModal">
+        <div class="product-panel">
+            <div class="history-header">
+                <h3>🍽️ Kelola Menu & Edit Harga</h3>
+                <button class="btn-close-history" type="button" onclick="toggleProductPanel(false)">Tutup</button>
+            </div>
+
+            <div class="product-list" id="productManagementList"></div>
+
+            <form id="productForm" class="product-form">
+                <h4>Tambah Menu Baru</h4>
+                <div class="input-group">
+                    <label for="newProductName">Nama Menu</label>
+                    <input id="newProductName" name="name" type="text" placeholder="Contoh: Es Teh Manis" required>
+                </div>
+                <div class="input-group">
+                    <label for="newProductPrice">Harga</label>
+                    <input id="newProductPrice" name="price" type="number" min="1000" step="1000" placeholder="5000" required>
+                </div>
+                <div class="input-group">
+                    <label for="newProductStock">Stok</label>
+                    <input id="newProductStock" name="stock" type="number" min="0" step="1" placeholder="20" required>
+                </div>
+                <button class="btn-action" type="submit">Tambah Menu</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <h2>Bayar</h2>
+            <div class="summary-row">
+                <span>Total Bayar:</span>
+                <span id="modalTotal">Rp 0</span>
+            </div>
+
+            <div class="input-group">
+                <label>Uang Diterima (Rp)</label>
+                <input type="number" id="cashInput" placeholder="Masukkan jumlah uang" oninput="calculateChange()">
+            </div>
+
+            <div class="change-amount" id="changeDisplay">Kembalian: Rp 0</div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-clear" style="flex: 1;" onclick="closePaymentModal()">Batal</button>
+                <button class="btn-action" style="flex: 1; background: #16a34a;" onclick="processPayment({ printReceiptAfter: false })">Konfirmasi</button>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="btn-print" style="flex: 1;" onclick="processPayment({ printReceiptAfter: true })">Print Struk Pelanggan</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="print-container" id="printContainer" style="display: none;"></div>
+
+    <script src="./assets/js/app.js"></script>
+</body>
+</html>
